@@ -22,7 +22,7 @@ async function initDataBlogList() {
     if (isLocal) {
         // 로컬 환경
         const response = await fetch(
-            origin.split("/")[0] + "/data/local_blogList.json"
+            url.origin + "/data/local_blogList.json"
         );
         blogList = await response.json();
     } else {
@@ -35,9 +35,21 @@ async function initDataBlogList() {
             siteConfig.repositoryName =
                 siteConfig.repositoryName || urlConfig.repositoryName;
         }
-        const response = await fetch(
-            `https://api.github.com/repos/${siteConfig.username}/${siteConfig.repositoryName}/contents/blog`
-        );
+
+        let response;
+
+        // 배포 상태에서 GitHub API를 사용(이용자가 적을 때)
+        if (!localDataUsing) {
+            response = await fetch(
+                `https://api.github.com/repos/${siteConfig.username}/${siteConfig.repositoryName}/contents/blog`
+            );
+        } else {
+            // 배포 상태에서 Local data를 사용(이용자가 많을 때)
+            response = await fetch(
+                url.origin + `/${siteConfig.repositoryName}/data/local_blogList.json`
+            );
+        }
+        // 배포 상태에서 Local data를 사용(이용자가 많을 때)
         blogList = await response.json();
     }
 
@@ -66,7 +78,7 @@ async function initDataBlogMenu() {
     if (isLocal) {
         // 로컬환경
         const response = await fetch(
-            origin.split("/")[0] + "/data/local_blogMenu.json"
+            url.origin + "/data/local_blogMenu.json"
         );
         blogMenu = await response.json();
     } else {
@@ -79,9 +91,20 @@ async function initDataBlogMenu() {
             siteConfig.repositoryName =
                 siteConfig.repositoryName || urlConfig.repositoryName;
         }
-        const response = await fetch(
-            `https://api.github.com/repos/${siteConfig.username}/${siteConfig.repositoryName}/contents/menu`
-        );
+
+        let response;
+
+        // 배포 상태에서 GitHub API를 사용(이용자가 적을 때)
+        if (!localDataUsing) {
+            response = await fetch(
+                `https://api.github.com/repos/${siteConfig.username}/${siteConfig.repositoryName}/contents/menu`
+            );
+        } else {
+            // 배포 상태에서 Local data를 사용(이용자가 많을 때)
+            response = await fetch(
+                url.origin + `/${siteConfig.repositoryName}/data/local_blogMenu.json`
+            );
+        }
         blogMenu = await response.json();
     }
     return blogMenu;

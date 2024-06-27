@@ -57,7 +57,7 @@ function extractFileInfo(filename) {
       category: matches[3],
       thumbnail: matches[4]
         ? "img/" + matches[4]
-        : `img/thumb${Math.floor(Math.random() * 10) + 1}-1.png`,
+        : `img/thumb${Math.floor(Math.random() * 10) + 1}.webp`,
       // description: matches[5].length > 25 ? matches[5].substring(0, 25) + '...' : matches[5],
       description: matches[5],
       author: matches[6] ? parseInt(matches[6]) : 0,

@@ -3,19 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="img/icon/favicon.svg" type="image/x-icon" />
     <title>Weniv Blog</title>
 
     <!-- marked -->
     <script src="./library/marked.min.js"></script>
-    <!-- // marked cdn -->
 
     <!-- hightlight.js -->
     <link rel="stylesheet" href="./library/highlight_default.min.css" />
     <script src="./library/highlight_highlight.min.js"></script>
     <link rel="stylesheet" href="./library/highlight_ally-light.min.css" />
-    <!-- // hightlight.js cdn -->
+
+    <!-- custom css -->
     <link rel="stylesheet" href=" style/style.css" />
-    <!-- tailwind cdn -->
+
+    <!-- tailwind -->
     <script src="./library/tailwind-3.4.1.js"></script>
     <script>
       tailwind.config = {
@@ -37,7 +39,7 @@
         },
       };
     </script>
-    <!-- // tailwind cdn -->
+    <!-- // tailwind -->
 
     <style>
       @keyframes slideDown {
@@ -64,9 +66,9 @@
         <!-- 블로그 제목 영역 -->
         <h1
           id="blog-title"
-          class="md:text-2xl text-lg leading-6 mr-auto font-semibold text-gray-900"
+          class="md:text-2xl text-lg leading-6 mr-auto font-semibold text-gray-900 cursor-pointer"
         >
-          위니브 블로그
+          WENIVLOG
         </h1>
         <!-- // 블로그 제목 영역 -->
 
@@ -81,27 +83,31 @@
           <!-- 메뉴 아이템들 -->
         </div>
 
-        <button id="search-button" class="ml-10">
+        <button id="search-button" class="ml-10 md:hidden flex">
           <span class="sr-only">검색창 열기</span>
         </button>
 
         <div
-          class="search-cont absolute z-10 rounded-2xl p-4 border border-graylv2 bottom-[-12px] right-2 xl:right-0 translate-y-full hidden bg-background"
+          class="search-cont w-80 hidden md:block md:relative absolute z-10 rounded-2xl p-4 border border-graylv2 bottom-[-12px] right-2 xl:right-0 translate-y-full bg-background w-96 max-w-full box-border md:p-0 md:top-0 md:right-0 md:border-0 md:translate-y-0 md:w-80 md:ml-10"
         >
-          <label for="search-input" class="w-full">
+          <label for="search-input">
             <input
               type="text"
               id="search-input"
-              class="search-input bg-graylv1 rounded-[10px] px-5 py-2.5 placeholder:font-normal placehoder:text-graylv3 focus:outline-0 shadow-sm"
-              placeholder="검색어를 입력하세요"
+              class="search-input bg-graylv1 rounded-[10px] px-5 py-2.5 placeholder:font-normal placehoder:text-graylv3 focus:outline-0 shadow-sm w-full"
+              placeholder="Keyword"
           /></label>
-          <button
-            class="search-inp-btn absolute top-1/2 right-[26px] -translate-y-1/2"
+          <div
+            class="btn-cont flex gap-2 justify-cetner items-center absolute top-1/2 md:right-4 right-8 -translate-y-1/2"
           >
-            <span class="sr-only">검색하기</span>
-          </button>
+            <button class="reset-inp-btn hidden">
+              <span class="sr-only">검색어 초기화</span>
+            </button>
+            <button class="search-inp-btn">
+              <span class="sr-only">검색하기</span>
+            </button>
+          </div>
         </div>
-
         <!-- // 메뉴 영역 -->
       </nav>
       <!-- 모바일에서 메뉴 영역이 보이도록 하는 영역 -->
@@ -116,13 +122,19 @@
       <!-- 블로그 포스트 리스트 영역 -->
       <div
         id="blog-posts"
-        class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-[25px] lg:gap-y-10 gap-y-4"
+        class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-[25px] lg:gap-y-10 gap-y-4 mb-20"
       ></div>
       <!-- // 블로그 포스트 리스트 영역-->
 
       <!-- contents 영역 -->
-      <div id="contents" class="mt-6 grid-cols-3 max-w-[990px] mx-auto"></div>
+      <div
+        id="contents"
+        class="mt-6 mb-28 grid-cols-3 max-w-[990px] mx-auto"
+      ></div>
       <!-- // contents 영역-->
+
+      <!-- pagination -->
+      <div id="pagination"></div>
     </main>
 
     <!-- category 검색 영역 -->
@@ -135,7 +147,11 @@
           <span class="sr-only">카테고리 열기</span>
         </button>
       </header>
-      <aside></aside>
+      <aside>
+        <div class = "px-5 py-[9px]">
+        <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fnathanlyj.github.io%2Fweniv_blog%2Fhit-counter&count_bg=%23D10000&title_bg=%23848383&icon=redhat.svg&icon_color=%23000000&title=counter&edge_flat=false"/></a>
+        </div>
+      </aside>
     </section>
     <!-- // category 검색 영역 -->
 
@@ -156,5 +172,8 @@
     <script src="js/URLparsing.js"></script>
     <script src="js/initData.js"></script>
     <script src="js/render.js"></script>
+
+    <!-- registry -->
+    <script src="js/registry.js"></script>
   </body>
 </html>
