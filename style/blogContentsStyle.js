@@ -2,7 +2,7 @@ function styleMarkdown(kinds, text, title_info = null) {
   /* 
     메뉴와 블로그 상세 목록을 globalStyle.js에 정의된 tailwind css로 스타일링 합니다. 
     */
-  console.log(kinds, text, title_info);
+  // console.log(kinds, text, title_info);
 
   const tempDiv = document.createElement("div");
   const html = marked.parse(text);

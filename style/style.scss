@@ -39,7 +39,6 @@ $activation: #dee8ff;
 #search-button {
   width: 1.5rem;
   height: 1.5rem;
-  display: flex;
   align-items: center;
 
   @include mask-image("../img/icon/icon-search.svg", $graylv3);
@@ -56,6 +55,34 @@ $activation: #dee8ff;
   align-items: center;
 
   @include mask-image("../img/icon/icon-search.svg", $graylv2);
+
+  @media screen and (min-width: 768px) {
+    background-color: $graylv4;
+  }
+  &:hover,
+  &.active {
+    background-color: $graylv4;
+  }
+}
+
+.reset-inp-btn {
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: $graylv2;
+  border-radius: 50%;
+
+  &::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    @include mask-image("../img/icon/icon-X.svg", $graylv1);
+  }
+  &:hover,
+  &.active {
+    background-color: $graylv4;
+  }
 }
 
 #copy-button {
@@ -87,6 +114,11 @@ $activation: #dee8ff;
   align-items: center;
   justify-content: center;
 
+  &:active,
+  &:focus {
+    outline: none;
+  }
+
   &::after {
     content: "";
     width: 24px;
@@ -100,5 +132,36 @@ $activation: #dee8ff;
 .active #aside-button {
   &::after {
     @include mask-image("../img/icon/icon-side-close-right.svg", $graylv3);
+  }
+}
+
+#page-prev {
+  display: flex;
+  &::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    @include mask-image("../img/icon/icon-prev.svg", $graylv3);
+  }
+  &:hover::after {
+    @include mask-image("../img/icon/icon-prev.svg", $graylv4);
+  }
+  &:disabled::after {
+    @include mask-image("../img/icon/icon-prev.svg", $graylv2);
+  }
+}
+#page-next {
+  display: flex;
+  &::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    @include mask-image("../img/icon/icon-next.svg", $graylv3);
+  }
+  &:hover::after {
+    @include mask-image("../img/icon/icon-next.svg", $graylv4);
+  }
+  &:disabled::after {
+    @include mask-image("../img/icon/icon-next.svg", $graylv2);
   }
 }
