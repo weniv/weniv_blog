@@ -62,6 +62,8 @@ function extractFileInfo(filename) {
       description: matches[5],
       author: matches[6] ? parseInt(matches[6]) : 0,
       fileType: matches[7],
+      name: filename,
+      download_url: origin + "blog/" + filename,
     };
   }
   return null;

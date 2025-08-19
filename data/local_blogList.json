@@ -1,26 +1,30 @@
 [
-    {
-        "name": "[20240121]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md",
-        "download_url": "/blog/[20240121]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md"
-    },
-    {
-        "name": "[20240120]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md",
-        "download_url": "/blog/[20240120]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md"
-    },
-    {
-        "name": "[20240119]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md",
-        "download_url": "/blog/[20240119]_[썸네일이 없는 테스트 파일]_[django]_[]_[이 파일은 테스트 파일입니다.]_[].md"
-    },
-    {
-        "name": "[20240128]_[파이썬_부트캠프]_[python]_[test_2.jpg]_[위니브 파이썬 부트캠프 강의자료입니다. 이 파일은 ipynb 파일입니다.]_[].ipynb",
-        "download_url": "/blog/[20240128]_[파이썬_부트캠프]_[python]_[test_2.jpg]_[위니브 파이썬 부트캠프 강의자료입니다. 이 파일은 ipynb 파일입니다.]_[].ipynb"
-    },
-    {
-        "name": "[20240505]_[블로그 글 양식]_[markdown]_[test_1.jpg]_[마크다운 양식입니다. 참고하여 블로그 글을 작성해주세요. 각 언어별 하이라이팅도 지원합니다.]_[].md",
-        "download_url": "/blog/[20240505]_[블로그 글 양식]_[markdown]_[test_1.jpg]_[마크다운 양식입니다. 참고하여 블로그 글을 작성해주세요. 각 언어별 하이라이팅도 지원합니다.]_[].md"
-    },
-    {
-        "name": "[date]_[title]_[category]_[thumnail]_[description]_[author].md",
-        "download_url": "/blog/[date]_[title]_[category]_[thumnail]_[description]_[author].md"
-    }
+  {
+    "date": "2024-01-21",
+    "title": "썸네일이 없는 테스트 파일",
+    "category": "django",
+    "thumbnail": "",
+    "description": "이 파일은 테스트 파일입니다."
+  },
+  {
+    "date": "2024-01-20",
+    "title": "썸네일이 없는 테스트 파일",
+    "category": "django",
+    "thumbnail": "",
+    "description": "이 파일은 테스트 파일입니다."
+  },
+  {
+    "date": "2024-01-19",
+    "title": "썸네일이 없는 테스트 파일",
+    "category": "django",
+    "thumbnail": "",
+    "description": "이 파일은 테스트 파일입니다."
+  },
+  {
+    "date": "2024-05-05",
+    "title": "블로그 글 양식",
+    "category": "markdown",
+    "thumbnail": "test_1.jpg",
+    "description": "마크다운 양식입니다. 참고하여 블로그 글을 작성해주세요. 각 언어별 하이라이팅도 지원합니다."
+  }
 ]

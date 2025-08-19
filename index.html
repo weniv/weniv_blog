@@ -1,21 +1,35 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="img/icon/favicon.svg" type="image/x-icon" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" href="img/icon/favicon.svg" type="image/x-icon"/>
     <title>Weniv Blog</title>
 
     <!-- marked -->
     <script src="./library/marked.min.js"></script>
 
     <!-- hightlight.js -->
-    <link rel="stylesheet" href="./library/highlight_default.min.css" />
+    <link rel="stylesheet" href="./library/highlight_default.min.css"/>
     <script src="./library/highlight_highlight.min.js"></script>
-    <link rel="stylesheet" href="./library/highlight_ally-light.min.css" />
+    <link rel="stylesheet" href="./library/highlight_ally-light.min.css"/>
 
     <!-- custom css -->
-    <link rel="stylesheet" href=" style/style.css" />
+    <link rel="stylesheet" href="style/style.css"/>
+
+    <!-- SF Pro Display Font (iMac style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      @font-face {
+          font-family: 'SUITE-Regular';
+          src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+          font-weight: 400;
+          font-style: normal;
+      }
+    </style>
 
     <!-- tailwind -->
     <script src="./library/tailwind-3.4.1.js"></script>
@@ -24,17 +38,28 @@
         theme: {
           extend: {
             colors: {
-              primary: "#2e6ff2",
-              background: "#fff",
-              surface: "#121314",
-              graylv1: "#f3f5fa",
-              graylv2: "#d9dbe0",
-              graylv3: "#8d9299",
-              graylv4: "#47494d",
-              error: "#ff3440",
-              lowError: "#ffc533",
-              activation: "#dee8ff",
+              // iMac inspired color palette
+              primary: "#007AFF",
+              secondary: "#5856D6",
+              success: "#34C759",
+              warning: "#FF9500",
+              danger: "#FF3B30",
+              background: "#F5F5F7",
+              surface: "#FFFFFF",
+              text: "#1D1D1F",
+              textSecondary: "#86868B",
+              border: "#D2D2D7",
+              card: "rgba(255, 255, 255, 0.8)",
+              glass: "rgba(255, 255, 255, 0.25)",
+              glassDark: "rgba(0, 0, 0, 0.1)",
             },
+            fontFamily: {
+              suite: ['SUITE-Regular'],
+              inter: ['Inter', 'sans-serif'],
+            },
+            backdropBlur: {
+              'xs': '2px',
+            }
           },
         },
       };
@@ -42,114 +67,119 @@
     <!-- // tailwind -->
 
     <style>
-      @keyframes slideDown {
-        from {
-          transition: all 1s;
-          height: 0px;
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-          height: 60px;
-        }
-      }
       .markdown-cell > ul > li > p {
         display: inline-block;
       }
     </style>
   </head>
-  <body class="font-sans w-full text-surface">
-    <header class="relative bg-white mx-auto border-b border-gray-300">
-      <nav
-        class="container max-w-[1190px] mx-auto md:p-[19px] p-4 flex items-center relative"
-      >
-        <!-- 블로그 제목 영역 -->
-        <h1
-          id="blog-title"
-          class="md:text-2xl text-lg leading-6 mr-auto font-semibold text-gray-900 cursor-pointer"
-        >
-          WENIVLOG
-        </h1>
-        <!-- // 블로그 제목 영역 -->
-
-        <!-- 메뉴 영역 -->
-        <div class="md:hidden w-6 h-6">
-          <button id="menu-button">
-            <span class="sr-only">메뉴 열기</span>
-          </button>
+  <body class="font-inter text-text w-full bg-background">
+    <!-- iMac Style Header -->
+    <header class="relative bg-glass backdrop-blur-md border-b border-border/30">
+      <nav class="container max-w-[1190px] mx-auto p-4 flex items-center justify-between">
+        <!-- Left: Menu Items -->
+        <div id="menu" class="flex items-center space-x-4">
+          <!-- Menu items will be rendered here -->
         </div>
-
-        <div id="menu" class="hidden md:flex items-center">
-          <!-- 메뉴 아이템들 -->
+        
+        <!-- Center: Logo -->
+        <div class="flex items-center space-x-4">
+          <a href="/weniv_blog/" class="inline-block">
+            <img
+              src="img/blog-icon.png"
+              alt="심형섭 블로그 아이콘"
+              class="h-12 w-auto cursor-pointer transition-transform hover:scale-105"
+              id="blog-icon"
+            />
+          </a>
+          <a href="/weniv_blog/" class="inline-block">
+            <img
+              src="img/blog-logo.png"
+              alt="심형섭 블로그 로고"
+              class="h-12 w-auto cursor-pointer transition-transform hover:scale-105"
+              id="blog-logo"
+            />
+          </a>
         </div>
-
-        <button id="search-button" class="ml-10 md:hidden flex">
-          <span class="sr-only">검색창 열기</span>
-        </button>
-
-        <div
-          class="search-cont w-80 hidden md:block md:relative absolute z-10 rounded-2xl p-4 border border-graylv2 bottom-[-12px] right-2 xl:right-0 translate-y-full bg-background w-96 max-w-full box-border md:p-0 md:top-0 md:right-0 md:border-0 md:translate-y-0 md:w-80 md:ml-10"
-        >
-          <label for="search-input">
-            <input
-              type="text"
-              id="search-input"
-              class="search-input bg-graylv1 rounded-[10px] px-5 py-2.5 placeholder:font-normal placehoder:text-graylv3 focus:outline-0 shadow-sm w-full"
-              placeholder="Keyword"
-          /></label>
-          <div
-            class="btn-cont flex gap-2 justify-cetner items-center absolute top-1/2 md:right-4 right-8 -translate-y-1/2"
-          >
-            <button class="reset-inp-btn hidden">
-              <span class="sr-only">검색어 초기화</span>
-            </button>
-            <button class="search-inp-btn">
-              <span class="sr-only">검색하기</span>
-            </button>
-          </div>
-        </div>
-        <!-- // 메뉴 영역 -->
+        
+        <!-- Right: Empty space for balance -->
+        <div class="w-32"></div>
+        
+        <!-- Blog title for URLparsing.js -->
+        <div id="blog-title" class="hidden"></div>
       </nav>
-      <!-- 모바일에서 메뉴 영역이 보이도록 하는 영역 -->
-      <div
-        id="mobileMenu"
-        class="absolute bg-background w-full max-w-[1190px] border-b border-graylv2 z-10 md:hidden"
-      ></div>
-      <!-- // 모바일에서 메뉴 영역이 보이도록 하는 영역 -->
     </header>
 
-    <main class="container p-8 pb-4 w-full mx-auto max-w-[1190px] md:pt-[60px]">
+    <main class="container p-4 md:p-8 pb-32 w-full mx-auto pt-4 min-h-screen">
+      
+      <!-- 좌측 카테고리 바 -->
+      <div class="fixed left-4 top-1/2 transform -translate-y-1/2 z-50">
+        <div class="bg-glass backdrop-blur-xl border border-border/30 rounded-2xl px-4 py-3 shadow-2xl">
+          <div class="flex flex-col items-center space-y-3">
+            <!-- Category Items -->
+            <div id="category-menu" class="flex flex-col items-center space-y-2">
+              <!-- Category items will be rendered here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 블로그 포스트 리스트 영역 -->
       <div
         id="blog-posts"
-        class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-[25px] lg:gap-y-10 gap-y-4 mb-20"
+        class="p-4 ml-24 mt-4 windows-tile-layout"
       ></div>
       <!-- // 블로그 포스트 리스트 영역-->
 
       <!-- contents 영역 -->
       <div
         id="contents"
-        class="mt-6 mb-28 grid-cols-3 max-w-[990px] mx-auto"
+        class="mt-4 mb-28 max-w-4xl mx-auto px-4 sm:px-6 md:px-6 prose prose-sm sm:prose md:prose-lg bg-card backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-lg border border-border/20"
       ></div>
       <!-- // contents 영역-->
 
-      <!-- pagination -->
-      <div id="pagination"></div>
+      <!-- pagination (hidden for masonry layout) -->
+      <div id="pagination" class="hidden"></div>
     </main>
 
-    <!-- category 검색 영역 -->
-    <section
-      class="category-aside hidden md:flex flex-col border border-graylv2 bg-white rounded-[10px] fixed top-24 right-8 overflow-y-auto w-fit h-fit"
-    >
-      <header class="flex items-center">
-        <h2 class="aside-tit sr-only text-sm font-semibold ml-5">content</h2>
-        <button id="aside-button">
-          <span class="sr-only">카테고리 열기</span>
-        </button>
-      </header>
-      <aside></aside>
-    </section>
-    <!-- // category 검색 영역 -->
+    <!-- iMac Style Bottom Menu Bar -->
+    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+      <div class="bg-glass backdrop-blur-xl border border-border/30 rounded-2xl px-6 py-3 shadow-2xl">
+        <div class="flex items-center space-x-6">
+          <!-- Search Container -->
+          <div class="relative">
+            <input
+              type="text"
+              id="search-input"
+              class="bg-glass backdrop-blur-sm border border-border/30 rounded-xl px-4 py-2 text-sm text-text placeholder-textSecondary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all duration-200 w-96"
+              placeholder="검색해보세요..."
+            />
+            <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <button class="search-inp-btn">
+                <span class="sr-only">검색하기</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 검색 결과 팝업 -->
+    <div id="search-popup" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-card backdrop-blur-xl border border-border/30 rounded-2xl p-6 shadow-2xl max-w-md w-full">
+          <h3 class="text-lg font-semibold text-text mb-4">검색 결과</h3>
+          <p class="text-textSecondary mb-6">검색어 "<span id="search-keyword"></span>" 영역으로 바로 이동하시겠습니까?</p>
+          <div class="flex space-x-3">
+            <button id="go-to-search" class="flex-1 bg-primary text-white px-4 py-2 rounded-xl hover:bg-primary/90 transition-colors duration-200">
+              이동하기
+            </button>
+            <button id="close-popup" class="flex-1 bg-gray-200 text-text px-4 py-2 rounded-xl hover:bg-gray-300 transition-colors duration-200">
+              취소
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- utils -->
     <script src="js/utils.js"></script>

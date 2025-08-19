@@ -62,20 +62,43 @@ async function renderMenu() {
     // 메뉴 링크 생성
     const link = document.createElement("a");
 
-    // (static) index.html: <div id="contents" class="mt-6 grid-cols-3"></div>
-    link.classList.add(...menuListStyle.split(" "));
-    link.classList.add(`${menu.name}`);
+    // iMac style left menu bar styling
+    link.classList.add(
+      "menu-item",          // 메뉴 아이템 클래스
+      "flex",               // 세로 배치용 flex 컨테이너
+      "flex-col",           // 위 ↓ 아래 방향
+      "items-center",       // 수평 중앙 정렬
+      "space-y-1",          // 아이콘과 텍스트 사이 간격
+      "px-2",               // 좌우 패딩
+      "py-2",               // 상하 패딩
+      "rounded-xl",         // 둥근 모서리
+      "text-xs",            // 작은 글자 크기
+      "font-medium",        // 중간 굵기
+      "text-text",          // 기본 텍스트 색
+      "hover:text-primary", // 호버 시 primary 컬러
+      "transition-all",     // 부드러운 전환
+      "duration-200",       // 전환 시간
+      "cursor-pointer"      // 커서 포인터
+    );
 
     link.href = menu.download_url;
     // 확장자를 제외하고 이름만 innerText로 사용
     const menuName = menu.name.split(".")[0];
-    link.innerText = menuName;
+    link.innerHTML = `
+      <img src="img/icon/${menuName.toLowerCase()}.svg"
+            alt="${menuName}"
+            class="w-6 h-6 opacity-80">  <!-- 아이콘 크기 -->
+      <span class="text-center">${menuName}</span>  <!-- 텍스트 -->
+    `;
 
     link.onclick = (event) => {
       // 메뉴 링크 클릭 시 이벤트 중지 후 menu 내용을 읽어와 contents 영역에 렌더링
       event.preventDefault();
 
       if (menu.name === "blog.md") {
+        // contents 영역 숨기기
+        document.getElementById("contents").style.display = "none";
+        
         if (blogList.length === 0) {
           // 블로그 리스트 로딩
           initDataBlogList().then(() => {
@@ -94,77 +117,25 @@ async function renderMenu() {
     document.getElementById("menu").appendChild(link);
   });
 
-  // 검색 버튼 클릭 시 검색창 출력
-  const searchButton = document.getElementById("search-button");
-  const searchCont = document.querySelector(".search-cont");
-
-  let searchInputShow = false;
-
-  window.addEventListener("click", (event) => {
-    // 화면의 크기가 md 보다 작을 때만 동작
-    if (window.innerWidth <= 768) {
-      if (event.target == searchButton) {
-        searchInputShow = !searchInputShow;
-        if (searchInputShow) {
-          searchButton.classList.add("active");
-          searchCont.classList.remove("hidden");
-          searchCont.classList.add("block");
-        } else {
-          searchButton.classList.remove("active");
-          searchCont.classList.add("hidden");
-          searchInputShow = false;
-        }
-      } else if (event.target == searchCont) {
-      } else {
-        searchButton.classList.remove("active");
-        searchCont.classList.add("hidden");
-        searchInputShow = false;
-      }
-    }
-  });
-
-  window.addEventListener("resize", (event) => {
-    if (window.innerWidth > 768) {
-      searchButton.classList.add("active");
-      searchCont.classList.remove("hidden");
-      searchInputShow = true;
-    } else {
-      searchButton.classList.remove("active");
-      searchCont.classList.add("hidden");
-    }
-  });
-
+  // 검색 입력 이벤트 설정
   const searchInput = document.getElementById("search-input");
-  searchInput.onkeyup = (event) => {
-    if (event.key === "Enter") {
-      // 엔터키 입력 시 검색 실행
-      search();
-    }
-  };
-
-  searchInput.onclick = (event) => {
-    event.stopPropagation();
-  };
-
-  const searchInputButton = document.querySelector(".search-inp-btn");
-  searchInputButton.onclick = (event) => {
-    event.stopPropagation();
-    search();
-  };
-
-  const resetInputButton = document.querySelector(".reset-inp-btn");
-  searchInput.addEventListener("input", () => {
-    // 초기화 버튼 보이기
-    if (searchInput.value) {
-      resetInputButton.classList.remove("hidden");
+  
+  searchInput.addEventListener("input", (event) => {
+    const keyword = event.target.value;
+    if (keyword.trim() === "") {
+      // 검색어가 비어있으면 전체 블로그 리스트 표시
+      renderBlogList();
     } else {
-      resetInputButton.classList.add("hidden");
+      // 검색 실행
+      search(keyword);
     }
   });
-  resetInputButton.addEventListener("click", (event) => {
-    event.stopPropagation();
-    searchInput.value = "";
-    resetInputButton.classList.add("hidden");
+
+  searchInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      const keyword = event.target.value;
+      search(keyword);
+    }
   });
 }
 
@@ -172,30 +143,63 @@ function createCardElement(fileInfo, index) {
   /*
     정규표현식으로 파싱된 파일정보 fileInfo를 기반으로 blog의 card 생성, index를 받는 이유는 첫번째 카드는 넓이를 크게 차지해야 하기 때문
     */
-  const card = document.createElement("div");
-  if (index === 0) {
-    card.classList.add(...bloglistFirstCardStyle.split(" "));
-  } else {
-    card.classList.add(...bloglistCardStyle.split(" "));
-  }
+  const cardElement = document.createElement("div");
+   
+  // Windows 8 style card styling
+  cardElement.classList.add(
+    "blog-card",           // 호버 효과용 클래스
+    "bg-card",             // 아이맥 스타일 배경
+    "backdrop-blur-sm",    // 글래스 효과
+    "border",              // 테두리
+    "border-border/20",    // 테두리 색상
+    "rounded-lg",          // 둥근 모서리
+    "shadow-lg",           // 그림자
+    "overflow-hidden",     // 오버플로우 숨김
+    "cursor-pointer",      // 커서 포인터
+    "transition-all",      // 부드러운 전환
+    "duration-300"         // 전환 시간
+  );
+
+  // Add prism effect overlay
+  const prismOverlay = document.createElement("div");
+  prismOverlay.classList.add("prism-overlay");
+  cardElement.appendChild(prismOverlay);
 
   if (fileInfo.thumbnail) {
     const img = document.createElement("img");
     img.src = fileInfo.thumbnail;
     img.alt = fileInfo.title;
-    if (index === 0) {
-      img.classList.add(...bloglistFirstCardImgStyle.split(" "));
-    } else {
-      img.classList.add(...bloglistCardImgStyle.split(" "));
-    }
-    card.appendChild(img);
+    img.classList.add(
+      "card-image",
+      "transition-transform",
+      "duration-300",
+      "hover:scale-105"
+    );
+    cardElement.appendChild(img);
   }
 
   const cardBody = document.createElement("div");
-  cardBody.classList.add(...bloglistCardBodyStyle.split(" "));
+  cardBody.classList.add(
+    "card-content"
+  );
 
   const category = document.createElement("span");
-  category.classList.add(...bloglistCardCategoryStyle.split(" "));
+  category.classList.add(
+    "inline-block",
+    "px-3",
+    "py-1",
+    "bg-primary/10",
+    "text-primary",
+    "text-xs",
+    "font-medium",
+    "rounded-full",
+    "self-start",
+    "cursor-pointer",
+    "hover:bg-primary/20",
+    "transition-colors",
+    "duration-200",
+    "mb-2"
+  );
   category.textContent = fileInfo.category;
   cardBody.appendChild(category);
 
@@ -207,89 +211,188 @@ function createCardElement(fileInfo, index) {
   };
 
   const title = document.createElement("h2");
-  title.classList.add(...bloglistCardTitleStyle.split(" "));
+  title.classList.add(
+    "text-lg",
+    "font-bold",
+    "text-text",
+    "hover:text-primary",
+    "transition-colors",
+    "duration-200",
+    "mb-2",
+    "leading-tight"
+  );
   title.textContent = fileInfo.title;
   cardBody.appendChild(title);
 
   const description = document.createElement("p");
-  if (index == 0) {
-    description.classList.add(...bloglistFirstCardDescriptionStyle.split(" "));
-  } else {
-    description.classList.add(...bloglistCardDescriptionStyle.split(" "));
-  }
+  description.classList.add(
+    "text-textSecondary",
+    "text-sm",
+    "flex-grow",
+    "mb-3",
+    "leading-relaxed"
+  );
   description.textContent = fileInfo.description;
   cardBody.appendChild(description);
 
   const authorDiv = document.createElement("div");
-  authorDiv.classList.add(...bloglistCardAuthorDivStyle.split(" "));
-  cardBody.appendChild(authorDiv);
+  authorDiv.classList.add(
+    "flex",
+    "items-center",
+    "space-x-3",
+    "mt-auto",
+    "pt-3"
+  );
 
   const authorImg = document.createElement("img");
   authorImg.src = users[fileInfo.author]["img"];
   authorImg.alt = users[fileInfo.author]["username"];
-  authorImg.classList.add(...bloglistCardAuthorImgStyle.split(" "));
+  authorImg.classList.add(
+    "w-5",
+    "h-5",
+    "rounded-full",
+    "object-cover"
+  );
   authorDiv.appendChild(authorImg);
 
   const author = document.createElement("p");
-  author.classList.add(...bloglistCardAuthorStyle.split(" "));
+  author.classList.add(
+    "text-xs",
+    "text-textSecondary",
+    "font-medium",
+    "whitespace-nowrap"
+  );
   author.textContent = users[fileInfo.author]["username"];
   authorDiv.appendChild(author);
 
   const date = document.createElement("p");
-  date.classList.add(...bloglistCardDateStyle.split(" "));
+  date.classList.add(
+    "text-xs",
+    "text-textSecondary",
+    "ml-auto",
+    "whitespace-nowrap"
+  );
   date.textContent = formatDate(fileInfo.date);
-  cardBody.appendChild(date);
+  authorDiv.appendChild(date);
 
-  card.appendChild(cardBody);
+  cardBody.appendChild(authorDiv);
+  cardElement.appendChild(cardBody);
 
-  return card;
+  return cardElement;
+}
+
+// 검색어 강조 함수
+function highlightSearchTerm(element, searchTerm) {
+  if (!searchTerm) return;
+  
+  const regex = new RegExp(`(${searchTerm})`, 'gi');
+  const text = element.textContent;
+  const highlightedText = text.replace(regex, '<span class="search-highlight">$1</span>');
+  element.innerHTML = highlightedText;
+}
+
+// 검색 결과 팝업 표시
+function showSearchPopup(searchTerm, postInfo) {
+  const popup = document.getElementById("search-popup");
+  const keywordSpan = document.getElementById("search-keyword");
+  const goToButton = document.getElementById("go-to-search");
+  const closeButton = document.getElementById("close-popup");
+  
+  keywordSpan.textContent = searchTerm;
+  popup.classList.remove("hidden");
+  
+  // 이동하기 버튼 클릭 시
+  goToButton.onclick = () => {
+    popup.classList.add("hidden");
+    // 해당 포스트로 이동
+    renderPostContent(postInfo);
+  };
+  
+  // 취소 버튼 클릭 시
+  closeButton.onclick = () => {
+    popup.classList.add("hidden");
+  };
+  
+  // 팝업 외부 클릭 시 닫기
+  popup.onclick = (e) => {
+    if (e.target === popup) {
+      popup.classList.add("hidden");
+    }
+  };
+}
+
+// 포스트 내용 렌더링
+function renderPostContent(postInfo) {
+  document.getElementById("contents").style.display = "block";
+  document.getElementById("blog-posts").style.display = "none";
+  
+  document.getElementById("contents").innerHTML = "";
+  
+  fetch(postInfo.download_url)
+    .then((response) => response.text())
+    .then((text) =>
+      postInfo.fileType === "md"
+        ? styleMarkdown("post", text, postInfo)
+        : styleJupyter("post", text, postInfo)
+    )
+    .then(() => {
+      // 검색어가 있으면 해당 부분으로 스크롤
+      const searchTerm = document.getElementById("search-input").value;
+      if (searchTerm) {
+        setTimeout(() => {
+          const highlightedElements = document.querySelectorAll('.search-highlight');
+          if (highlightedElements.length > 0) {
+            highlightedElements[0].scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
+          }
+        }, 500);
+      }
+      
+      const url = new URL(origin);
+      url.searchParams.set("post", postInfo.name);
+      window.history.pushState({}, "", url);
+    });
 }
 
 function renderBlogList(searchResult = null, currentPage = 1) {
   /*
     blog의 main 영역에 블로그 포스트 목록을 렌더링
     1. 검색 키워드 없이 대부분 renderBlogList()로 사용.
-    2. 검색을 했을 때에만 searchResult에 목록이 담겨 들어옴
+    2. 검색을 했을 때만 searchResult에 목록이 담겨 들어옴
     */
-  const pageUnit = 10;
+  const postsToRender = searchResult || blogList;
+  const searchTerm = document.getElementById("search-input").value;
 
   if (searchResult) {
     // 검색 keyword가 있을 경우
     document.getElementById("blog-posts").style.display = "grid";
     document.getElementById("blog-posts").innerHTML = "";
+    document.getElementById("pagination").style.display = "none";
 
-    const totalPage = Math.ceil(searchResult.length / pageUnit);
-    initPagination(totalPage);
-    renderPagination(totalPage, 1, searchResult);
-
-    const startIndex = (currentPage - 1) * pageUnit;
-    const endIndex = currentPage * pageUnit;
-    searchResult.slice(startIndex, endIndex).forEach((post, index) => {
+    postsToRender.forEach((post, index) => {
       const postInfo = extractFileInfo(post.name);
       if (postInfo) {
         const cardElement = createCardElement(postInfo, index);
+        
+        // 검색어 강조
+        if (searchTerm) {
+          const titleElement = cardElement.querySelector("h2");
+          const descriptionElement = cardElement.querySelector("p");
+          highlightSearchTerm(titleElement, searchTerm);
+          highlightSearchTerm(descriptionElement, searchTerm);
+        }
 
         cardElement.onclick = (event) => {
-          // 블로그 게시글 링크 클릭 시 이벤트 중지 후 post 내용을 읽어와 contents 영역에 렌더링
           event.preventDefault();
-          // contents 영역을 보이게 처리
-          document.getElementById("contents").style.display = "block";
-          // blog-posts 영역을 보이지 않게 처리
-          document.getElementById("blog-posts").style.display = "none";
-          document.getElementById("pagination").style.display = "none";
-          fetch(post.download_url)
-            .then((response) => response.text())
-            .then((text) =>
-              postInfo.fileType === "md"
-                ? styleMarkdown("post", text, postInfo)
-                : styleJupyter("post", text, postInfo)
-            )
-            .then(() => {
-              // 렌더링 후에는 URL 변경(query string으로 블로그 포스트 이름 추가)
-              const url = new URL(origin);
-              url.searchParams.set("post", post.name);
-              window.history.pushState({}, "", url);
-            });
+          
+          // 검색어가 있으면 팝업 표시
+          if (searchTerm) {
+            showSearchPopup(searchTerm, postInfo);
+          } else {
+            renderPostContent(postInfo);
+          }
         };
         document.getElementById("blog-posts").appendChild(cardElement);
       }
@@ -299,57 +402,17 @@ function renderBlogList(searchResult = null, currentPage = 1) {
   } else {
     // 검색 keyword가 없을 경우
     document.getElementById("blog-posts").style.display = "grid";
-    document.getElementById("pagination").style.display = "flex";
+    document.getElementById("pagination").style.display = "none";
     document.getElementById("blog-posts").innerHTML = "";
 
-    const totalPage = Math.ceil(blogList.length / pageUnit);
-    initPagination(totalPage);
-    renderPagination(totalPage, 1);
-
-    const startIndex = (currentPage - 1) * pageUnit;
-    const endIndex = currentPage * pageUnit;
-
-    // console.log("blogList", blogList);
-    blogList.slice(startIndex, endIndex).forEach((post, index) => {
+    postsToRender.forEach((post, index) => {
       const postInfo = extractFileInfo(post.name);
       if (postInfo) {
-        // console.log(postInfo)
         const cardElement = createCardElement(postInfo, index);
 
         cardElement.onclick = (event) => {
-          // 블로그 게시글 링크 클릭 시 이벤트 중지 후 post 내용을 읽어와 contents 영역에 렌더링
           event.preventDefault();
-          // contents 영역을 보이게 처리
-          document.getElementById("contents").style.display = "block";
-          // blog-posts 영역을 보이지 않게 처리
-          document.getElementById("blog-posts").style.display = "none";
-          document.getElementById("pagination").style.display = "none";
-
-          // console.log(post)
-          // console.log(post.download_url)
-          let postDownloadUrl;
-          if (!isLocal && localDataUsing) {
-            postDownloadUrl = `${url.origin}/${siteConfig.repositoryName}${post.download_url}`;
-          } else {
-            postDownloadUrl = post.download_url;
-          }
-          try {
-            fetch(postDownloadUrl)
-              .then((response) => response.text())
-              .then((text) =>
-                postInfo.fileType === "md"
-                  ? styleMarkdown("post", text, postInfo)
-                  : styleJupyter("post", text, postInfo)
-              )
-              .then(() => {
-                // 렌더링 후에는 URL 변경(query string으로 블로그 포스트 이름 추가)
-                const url = new URL(origin);
-                url.searchParams.set("post", post.name);
-                window.history.pushState({}, "", url);
-              });
-          } catch (error) {
-            styleMarkdown("post", "# Error입니다. 파일명을 확인해주세요.");
-          }
+          renderPostContent(postInfo);
         };
         document.getElementById("blog-posts").appendChild(cardElement);
       }
@@ -366,7 +429,11 @@ function renderOtherContents(menu) {
     */
   // main 영역에 blog.md를 제외한 다른 파일을 렌더링
   document.getElementById("blog-posts").style.display = "none";
+  document.getElementById("pagination").style.display = "none";
   document.getElementById("contents").style.display = "block";
+  
+  // contents 영역 내용 초기화
+  document.getElementById("contents").innerHTML = "";
 
   // 만약 menu가 string type 이라면 download_url, name을 menu로 설정
   if (typeof menu === "string") {
@@ -417,27 +484,35 @@ function renderBlogCategory() {
   const categoryArray = Object.keys(categoryList);
   categoryArray.sort();
 
-  const categoryContainer = document.querySelector("aside");
-  categoryContainer.classList.add(...categoryContainerStyle.split(" "));
+  const categoryContainer = document.querySelector("#category-menu");
+  categoryContainer.innerHTML = "";
+  categoryContainer.classList.add(
+    "space-y-2"
+  );
 
   const categoryWrapper = document.querySelector(".category-aside");
-  const categoryTitle = categoryWrapper.querySelector(".aside-tit");
+  // 기존 사이드바 관련 요소들이 없으므로 조건부로 처리
+  const categoryTitle = categoryWrapper?.querySelector(".aside-tit");
   const categoryButton = document.getElementById("aside-button");
-  window.addEventListener("click", (evt) => {
-    // categoryButton을 눌렀을 때
-    if (evt.target === categoryButton) {
-      categoryWrapper.classList.toggle("active");
-      categoryTitle.classList.toggle("sr-only");
-      categoryContainer.classList.toggle("md:flex");
-    } else if (
-      categoryWrapper.classList.contains("active") &&
-      !categoryWrapper.contains(evt.target)
-    ) {
-      categoryWrapper.classList.remove("active");
-      categoryTitle.classList.add("sr-only");
-      categoryContainer.classList.remove("md:flex");
-    }
-  });
+  
+  // 사이드바 토글 기능이 필요한 경우에만 이벤트 리스너 추가
+  if (categoryButton && categoryTitle) {
+    window.addEventListener("click", (evt) => {
+      // categoryButton을 눌렀을 때
+      if (evt.target === categoryButton) {
+        categoryWrapper.classList.toggle("active");
+        categoryTitle.classList.toggle("sr-only");
+        categoryContainer.classList.toggle("md:flex");
+      } else if (
+        categoryWrapper.classList.contains("active") &&
+        !categoryWrapper.contains(evt.target)
+      ) {
+        categoryWrapper.classList.remove("active");
+        categoryTitle.classList.add("sr-only");
+        categoryContainer.classList.remove("md:flex");
+      }
+    });
+  }
 
   categoryArray.unshift("All");
 
@@ -449,23 +524,79 @@ function renderBlogCategory() {
     const categoryCount = document.createElement("span");
 
     if (categoryList[category]) {
-      categoryItem.classList.add(...categoryItemStyle.split(" "));
+      categoryItem.classList.add(
+        "flex",
+        "items-center",
+        "justify-between",
+        "px-4",
+        "py-3",
+        "bg-card",
+        "backdrop-blur-sm",
+        "border",
+        "border-border/20",
+        "rounded-xl",
+        "text-sm",
+        "font-medium",
+        "text-text",
+        "hover:bg-white/50",
+        "hover:border-primary/30",
+        "transition-all",
+        "duration-200",
+        "cursor-pointer"
+      );
       categoryItem.textContent = category;
       categoryItem.onclick = (event) => {
         search(category, "category");
       };
 
-      categoryCount.classList.add(...categoryItemCountStyle.split(" "));
-      categoryCount.textContent = `(${categoryList[category]})`;
+      categoryCount.classList.add(
+        "text-xs",
+        "text-textSecondary",
+        "bg-primary/10",
+        "text-primary",
+        "px-2",
+        "py-1",
+        "rounded-full",
+        "font-medium"
+      );
+      categoryCount.textContent = categoryList[category];
     } else {
-      categoryItem.classList.add(...categoryItemStyle.split(" "));
+      categoryItem.classList.add(
+        "flex",
+        "items-center",
+        "justify-between",
+        "px-4",
+        "py-3",
+        "bg-card",
+        "backdrop-blur-sm",
+        "border",
+        "border-border/20",
+        "rounded-xl",
+        "text-sm",
+        "font-medium",
+        "text-text",
+        "hover:bg-white/50",
+        "hover:border-primary/30",
+        "transition-all",
+        "duration-200",
+        "cursor-pointer"
+      );
       categoryItem.textContent = category;
       categoryItem.onclick = (event) => {
         search();
       };
 
-      categoryCount.classList.add(...categoryItemCountStyle.split(" "));
-      categoryCount.textContent = `(${blogList.length})`;
+      categoryCount.classList.add(
+        "text-xs",
+        "text-textSecondary",
+        "bg-primary/10",
+        "text-primary",
+        "px-2",
+        "py-1",
+        "rounded-full",
+        "font-medium"
+      );
+      categoryCount.textContent = blogList.length;
     }
 
     categoryItem.appendChild(categoryCount);
@@ -478,17 +609,45 @@ function initPagination(totalPage) {
 
   pagination.style.display = "flex";
 
-  pagination.classList.add(...paginationStyle.split(" "));
+  // iMac style pagination
+  pagination.classList.add(
+    "justify-center",
+    "items-center",
+    "space-x-2",
+    "mt-8",
+    "mb-8"
+  );
 
   const prevButton = document.createElement("button");
   prevButton.setAttribute("id", "page-prev");
-  prevButton.classList.add(...pageMoveButtonStyle.split(" "));
-  const pageNav =
-    pagination.querySelector("nav") || document.createElement("nav");
-  pageNav.innerHTML = "";
-
+  prevButton.classList.add(
+    "flex",
+    "items-center",
+    "justify-center",
+    "w-10",
+    "h-10",
+    "rounded-xl",
+    "bg-card",
+    "backdrop-blur-sm",
+    "border",
+    "border-border/20",
+    "text-textSecondary",
+    "hover:text-text",
+    "hover:bg-white/50",
+    "transition-all",
+    "duration-200",
+    "disabled:opacity-50",
+    "disabled:cursor-not-allowed"
+  );
+  
+  const pageNav = document.createElement("nav");
   pageNav.setAttribute("id", "pagination-list");
-  pageNav.classList.add(...pageNumberListStyle.split(" "));
+  pageNav.classList.add(
+    "flex",
+    "items-center",
+    "space-x-1"
+  );
+  
   const docFrag = document.createDocumentFragment();
   for (let i = 0; i < totalPage; i++) {
     if (i === 7) {
@@ -496,14 +655,49 @@ function initPagination(totalPage) {
     }
 
     const page = document.createElement("button");
-    page.classList.add(...pageNumberStyle.split(" "));
+    page.classList.add(
+      "flex",
+      "items-center",
+      "justify-center",
+      "w-10",
+      "h-10",
+      "rounded-xl",
+      "bg-card",
+      "backdrop-blur-sm",
+      "border",
+      "border-border/20",
+      "text-textSecondary",
+      "hover:text-text",
+      "hover:bg-white/50",
+      "transition-all",
+      "duration-200",
+      "font-medium"
+    );
     docFrag.appendChild(page);
   }
   pageNav.appendChild(docFrag);
 
   const nextButton = document.createElement("button");
   nextButton.setAttribute("id", "page-next");
-  nextButton.classList.add(...pageMoveButtonStyle.split(" "));
+  nextButton.classList.add(
+    "flex",
+    "items-center",
+    "justify-center",
+    "w-10",
+    "h-10",
+    "rounded-xl",
+    "bg-card",
+    "backdrop-blur-sm",
+    "border",
+    "border-border/20",
+    "text-textSecondary",
+    "hover:text-text",
+    "hover:bg-white/50",
+    "transition-all",
+    "duration-200",
+    "disabled:opacity-50",
+    "disabled:cursor-not-allowed"
+  );
 
   if (!pagination.innerHTML) {
     pagination.append(prevButton, pageNav, nextButton);
@@ -517,6 +711,7 @@ function initPagination(totalPage) {
 function renderPagination(totalPage, currentPage, targetList = null) {
   const prevButton = document.getElementById("page-prev");
   const nextButton = document.getElementById("page-next");
+  
   if (currentPage === 1) {
     prevButton.setAttribute("disabled", true);
     nextButton.removeAttribute("disabled");
@@ -527,6 +722,7 @@ function renderPagination(totalPage, currentPage, targetList = null) {
     prevButton.removeAttribute("disabled");
     nextButton.removeAttribute("disabled");
   }
+  
   prevButton.onclick = (event) => {
     event.preventDefault();
     renderBlogList(targetList, currentPage - 1);
@@ -545,81 +741,68 @@ function renderPagination(totalPage, currentPage, targetList = null) {
     pageList.forEach((page, index) => {
       page.textContent = index + 1;
       if (index + 1 === currentPage) {
-        page.classList.remove("font-normal");
-        page.classList.add(...pageNumberActiveStyle.split(" "));
+        page.classList.remove("text-textSecondary", "bg-card");
+        page.classList.add(
+          "bg-primary",
+          "text-white",
+          "border-primary"
+        );
       } else {
-        page.classList.remove(...pageNumberActiveStyle.split(" "));
-        page.classList.add("font-normal");
+        page.classList.remove("bg-primary", "text-white", "border-primary");
+        page.classList.add("text-textSecondary", "bg-card");
       }
+      
       page.onclick = (event) => {
+        event.preventDefault();
         renderBlogList(targetList, index + 1);
         renderPagination(totalPage, index + 1, targetList);
       };
     });
   } else {
-    if (currentPage <= 4) {
-      ellipsisPagination(
-        pageList,
-        [1, 2, 3, 4, 5, "...", totalPage],
-        targetList
-      );
-    } else if (currentPage > totalPage - 4) {
-      ellipsisPagination(
-        pageList,
-        [
-          1,
-          "...",
-          totalPage - 4,
-          totalPage - 3,
-          totalPage - 2,
-          totalPage - 1,
-          totalPage,
-        ],
-        targetList
-      );
-    } else {
-      ellipsisPagination(
-        pageList,
-        [
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPage,
-        ],
-        targetList
-      );
-    }
-  }
-
-  function ellipsisPagination(pageList, indexList, targetList = null) {
-    pageList.forEach((page, index) => {
-      page.textContent = indexList[index];
-      if (indexList[index] === currentPage) {
-        page.classList.remove("font-normal");
-        page.classList.add(...pageNumberActiveStyle.split(" "));
-      } else {
-        page.classList.remove(...pageNumberActiveStyle.split(" "));
-        page.classList.add("font-normal");
-      }
-      if (indexList[index] === "...") {
-        page.style.pointerEvents = "none";
-        page.onclick = (event) => {
-          event.preventDefault();
-        };
-      } else {
-        page.style.pointerEvents = "all";
-
-        page.onclick = (event) => {
-          renderPagination(totalPage, indexList[index], targetList);
-        };
-      }
-    });
+    ellipsisPagination(pageList, totalPage, targetList);
   }
 }
 
+function ellipsisPagination(pageList, totalPage, targetList = null) {
+  const currentPage = parseInt(document.querySelector("#pagination button.bg-primary")?.textContent) || 1;
+  
+  let indexList;
+  if (currentPage <= 4) {
+    indexList = [1, 2, 3, 4, 5, "...", totalPage];
+  } else if (currentPage > totalPage - 4) {
+    indexList = [1, "...", totalPage - 4, totalPage - 3, totalPage - 2, totalPage - 1, totalPage];
+  } else {
+    indexList = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPage];
+  }
+
+  pageList.forEach((page, index) => {
+    page.textContent = indexList[index];
+    
+    if (indexList[index] === currentPage) {
+      page.classList.remove("text-textSecondary", "bg-card");
+      page.classList.add("bg-primary", "text-white", "border-primary");
+    } else {
+      page.classList.remove("bg-primary", "text-white", "border-primary");
+      page.classList.add("text-textSecondary", "bg-card");
+    }
+    
+    if (indexList[index] === "...") {
+      page.style.pointerEvents = "none";
+      page.onclick = (event) => {
+        event.preventDefault();
+      };
+    } else {
+      page.style.pointerEvents = "all";
+      page.onclick = (event) => {
+        event.preventDefault();
+        renderBlogList(targetList, indexList[index]);
+        renderPagination(totalPage, indexList[index], targetList);
+      };
+    }
+  });
+}
+
+// 초기화 함수
 async function initialize() {
   /*
     최초 실행 함수, URLparsing은 이 영역에서 담당하지 않고 index.html에서 로드 될 때 실행, blogList와 blogMenu는 initData.js에서 정의되고 로드될 때 실행. 다만 함수의 흐름을 파악하고자 이곳으로 옮겨올 필요성이 있음
@@ -665,6 +848,9 @@ async function initialize() {
       // console.log(postNameDecode);
       postInfo = extractFileInfo(postNameDecode);
       try {
+        if (!postInfo) {
+          throw new Error("Post info is null");
+        }
         fetch(origin + "blog/" + postNameDecode)
           .then((response) => response.text())
           .then((text) =>

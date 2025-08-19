@@ -25,7 +25,6 @@ if (isLocal) {
 
   // 블로그 제목 설정
   const $blogTitle = document.getElementById("blog-title");
-  $blogTitle.innerText = siteConfig.blogTitle || defaultTitle;
 
   // 홈페이지 title을 제목으로 설정
   document.title = siteConfig.blogTitle || defaultTitle;
@@ -49,7 +48,8 @@ if (isLocal) {
 
   // 블로그 제목 설정
   const $blogTitle = document.getElementById("blog-title");
-  $blogTitle.innerText = siteConfig.blogTitle || defaultTitle;
+  // 블로그 제목을 텍스트로 $blogTitle.innerText = siteConfig.blogTitle;
+  $blogTitle.innerHTML = `<img src="img/blog-logo.png" alt="심형섭 블로그 로고" class="h-8 inline-block mr-2"/>${siteConfig.blogTitle}`;
 
   // 홈페이지 title을 제목으로 설정
   document.title = siteConfig.blogTitle || defaultTitle;
@@ -76,12 +76,15 @@ window.addEventListener("popstate", (event) => {
 
   if (!url.search.split("=")[1] || url.search.split("=")[1] === "blog.md") {
     // 블로그 리스트 로딩
+    document.getElementById("contents").style.display = "none";
     renderBlogList();
   } else if (url.search.split("=")[0] === "?menu") {
     // 메뉴 상세 정보 로딩
     // console.log('menu', url.search.split("=")[1])
     document.getElementById("blog-posts").style.display = "none";
+    document.getElementById("pagination").style.display = "none";
     document.getElementById("contents").style.display = "block";
+    document.getElementById("contents").innerHTML = "";
     // console.log(origin + "menu/" + url.search.split("=")[1])
     fetch(origin + "menu/" + url.search.split("=")[1])
       .then((response) => response.text())
@@ -91,26 +94,41 @@ window.addEventListener("popstate", (event) => {
       });
   } else if (url.search.split("=")[0] === "?post") {
     // 블로그 상세 정보 로딩
-    if (url.search.split("=")[0] === "?menu") {
-      document.getElementById("blog-posts").style.display = "none";
-      document.getElementById("contents").style.display = "block";
-      fetch(origin + "menu/" + url.search.split("=")[1])
-        .then((response) => response.text())
-        .then((text) => styleMarkdown("menu", text));
-    } else if (url.search.split("=")[0] === "?post") {
-      document.getElementById("contents").style.display = "block";
-      document.getElementById("blog-posts").style.display = "none";
-      postNameDecode = decodeURI(url.search.split("=")[1]).replaceAll("+", " ");
-      // console.log(postNameDecode);
-      postInfo = extractFileInfo(postNameDecode);
-      fetch(origin + "blog/" + postNameDecode)
-        .then((response) => response.text())
-        .then((text) =>
-          postInfo.fileType === "md"
-            ? styleMarkdown("post", text, postInfo)
-            : styleJupyter("post", text, postInfo)
-        );
+    document.getElementById("contents").style.display = "block";
+    document.getElementById("blog-posts").style.display = "none";
+    document.getElementById("pagination").style.display = "none";
+    document.getElementById("contents").innerHTML = "";
+    postNameDecode = decodeURI(url.search.split("=")[1]).replaceAll("+", " ");
+    // console.log(postNameDecode);
+    postInfo = extractFileInfo(postNameDecode);
+    if (!postInfo) {
+      alert("잘못된 포스트입니다.");
+      // 잘못된 포스트일 때 메인 페이지로 리다이렉트
+      const mainUrl = new URL(window.location.origin + window.location.pathname);
+      window.history.pushState({}, "", mainUrl);
+      renderBlogList();
+      return;
     }
+    fetch(origin + "blog/" + postNameDecode)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Post not found');
+        }
+        return response.text();
+      })
+      .then((text) =>
+        postInfo.fileType === "md"
+          ? styleMarkdown("post", text, postInfo)
+          : styleJupyter("post", text, postInfo)
+      )
+      .catch((error) => {
+        console.error('Error loading post:', error);
+        alert("포스트를 불러올 수 없습니다.");
+        // 오류 발생 시 메인 페이지로 리다이렉트
+        const mainUrl = new URL(window.location.origin + window.location.pathname);
+        window.history.pushState({}, "", mainUrl);
+        renderBlogList();
+      });
   } else {
     alert("잘못된 URL입니다.");
   }
